@@ -12,13 +12,18 @@
 <body>
     <h1>Server Side Calculator</h1>
 <input id=firstInput type="number">
-<button id="plusButtonIn" value="+">+</button>
-<button id="minusButtonIn" value="-">-</button>
-<button id="multiplyButtonIn" value="*">*</button>
-<button id="divideButtonIn" value="/">/</button>
+<button id="plusButtonIn" value="add">+</button>
+<button id="minusButtonIn" value="subtract">-</button>
+<button id="multiplyButtonIn" value="multiply">*</button>
+<button id="divideButtonIn" value="divide">/</button>
 <input id= secondInput type="number">
-<button id="getNumButton">Collect Numbers</button>
-<button id="clearButtonIn">c</button>
+<button id="getNumButton" value="equate">=</button>
+<button id="clearButtonIn" value="clear">c</button>
+<button id="clearHistoryButton">Clear History</button>
+<h3>History </h3> 
+<div id="calculationsDiv">
+    <ul id="calculationsOut"></ul>
+</div>
 
 </body>
 </html>

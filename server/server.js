@@ -1,12 +1,14 @@
 // requires
 const express = require( 'express');
 const app = express();
-const numbers = require(' ./modules/numbers/numbers');
+const bodyParser = require('body-parser');
+const calculate = require('./modules/calculate');
 
 
 ///// app uses
 app.use( express.static ('./server/public'));
-app.use ('/numbers', numbers);
+app.use( bodyParser.urlencoded( { extended: true}));
+app.use ('/calculate', calculate);
 
 /////globals
 const port = 5001;
