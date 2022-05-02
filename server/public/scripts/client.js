@@ -1,51 +1,82 @@
 
 $( document ).ready( onReady );
-
+let operatorValue = '';
 function onReady(){
     console.log('in onReady');
-$('#getNumButton').on( 'click', numbersToBeCalculated);
+$('#calculateButton').on( 'click', requestCalculation);
 $('#clearButtonIn').on( 'click', clearInputFields);
-$('#clearHistoryButton').on( 'click', clearHistory);
-getNumbers();
+$('#plusButtonIn').on( 'click', function (){updateOperatorValue ('add')});
+$('#minusButtonIn').on( 'click', function (){updateOperatorValue ('subtract')});
+$('#multiplyButtonIn').on( 'click', function (){updateOperatorValue ('multiply')});
+$('#divideButtonIn').on( 'click', function (){updateOperatorValue ('divide')});
 }// end onReady
 
-function numbersToBeCalculated(){
+function updateOperatorValue (operatorSelection){
+    operatorValue = operatorSelection;
+}
+
+
+
+function requestCalculation(){
     console.log('in numbersToBeCalculated');
-    let inputNumbers = {
-        num1: $('#firstInput').val(),
-        num2: $('#secondInput').val(),
-        operation: 'subtract'  // needs to get the value from "this" 
+    let requestedCalculation = {
+        input1: $('#firstInput').val(),
+        input2: $('#secondInput').val(),
+        operation: operatorValue  // needs to get the value from "this" 
                                 // button click
     }
     $.ajax({
         method: 'POST',
         url: '/calculate',
-        data: inputNumbers
+        data: requestedCalculation
     }).then(function( response){
         console.log('back from POST', response);
-        getNumbers();
+        requestHistoryAndResultOfCalculation();
     }).catch ( function ( err ){
         console.log(err);
         alert('error in numbersToBeCalculated ')
     })
+    requestHistoryAndResultOfCalculation();
 }
 
-function getNumbers(){
+function requestHistoryAndResultOfCalculation(){
     $.ajax({
         method: 'GET',
         url: '/calculate'
     }).then (function (response){
+        updateDom(response);
         console.log('this is the response', response);
-        const el = $('#calculationsOut');
-        el.empty();
-        for (let i=0; i<response.length; i++){
-            el.append(`<li> ${response[ i ].num1 }, ${response[ i ].num2}, ${response[ i ].operation}`)
+} 
+    )}// end getNumbers
+function updateDom (historyAndResultOfCalculation) {
+    const el = $('#calculationsOut');
+    el.empty();
+    // el.append(`<li>${historyAndResultOfCalculation.result}</li>`);
+    // el.append(historyAndResultOfCalculation.history[1].input1);
+    for (let i=0; i<historyAndResultOfCalculation.history.length; i++){
+        let operationSign = '';
+        if (historyAndResultOfCalculation.history[ i ].operation === 'add'){
+            operationSign = '+';
         }
-
-    })
-    
-
-} // end getNumbers
+        else if (historyAndResultOfCalculation.history[ i ].operation === 'subtract'){
+            operationSign = '-';
+        } 
+        else if (historyAndResultOfCalculation.history[ i ].operation === 'multiply'){
+            operationSign = '*';
+        }
+        else if (historyAndResultOfCalculation.history[ i ].operation === 'divide'){
+            operationSign = '/';
+        }
+    el.append(`<li> 
+    ${historyAndResultOfCalculation.history[ i ].input1 } 
+    ${operationSign}
+    ${historyAndResultOfCalculation.history[ i ].input2} = 
+    ${historyAndResultOfCalculation.history[ i ].answer} </li>`);
+        }
+    const el2= $('#answer');
+    el2.empty();
+    el2.append(historyAndResultOfCalculation.result);
+}
 
 // clearing input fields
 function clearInputFields(){
@@ -54,10 +85,7 @@ function clearInputFields(){
     }// end clearInputFields
 
 // clearing History
-function clearHistory(){
-const el = $('#calculationsOut');
-el.empty();
-}
+
 // not functional yet, clears it, but data comes back after a refresh
 // guessing a need a DELETE request
 
