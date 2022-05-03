@@ -1,6 +1,8 @@
 
 $( document ).ready( onReady );
+// initializing operator 
 let operatorValue = '';
+
 function onReady(){
     console.log('in onReady');
 $('#calculateButton').on( 'click', requestCalculation);
@@ -16,28 +18,30 @@ function updateOperatorValue (operatorSelection){
 }
 
 
-
+// requesting a calculation from the server
+// with information from the user
 function requestCalculation(){
-    console.log('in numbersToBeCalculated');
+    console.log('in requestCalculation');
     let requestedCalculation = {
         input1: $('#firstInput').val(),
         input2: $('#secondInput').val(),
-        operation: operatorValue  // needs to get the value from "this" 
-                                // button click
-    }
+        operation: operatorValue                          
+    } // end getting information from the user
     $.ajax({
         method: 'POST',
         url: '/calculate',
         data: requestedCalculation
+    // seding the data of the information gathered from user
     }).then(function( response){
         console.log('back from POST', response);
+        // getting a response back from the server
         requestHistoryAndResultOfCalculation();
     }).catch ( function ( err ){
         console.log(err);
         alert('error in numbersToBeCalculated ')
     })
-    requestHistoryAndResultOfCalculation();
-}
+
+} // end requestCalculation
 
 function requestHistoryAndResultOfCalculation(){
     $.ajax({
@@ -73,9 +77,9 @@ function updateDom (historyAndResultOfCalculation) {
     ${historyAndResultOfCalculation.history[ i ].input2} = 
     ${historyAndResultOfCalculation.history[ i ].answer} </li>`);
         }
-    const el2= $('#answer');
-    el2.empty();
-    el2.append(historyAndResultOfCalculation.result);
+    const answerToDom= $('#answer');
+    answerToDom.empty();
+    answerToDom.append(historyAndResultOfCalculation.result);
 }
 
 // clearing input fields
@@ -84,8 +88,5 @@ function clearInputFields(){
     $( '#secondInput' ).val( '' );
     }// end clearInputFields
 
-// clearing History
 
-// not functional yet, clears it, but data comes back after a refresh
-// guessing a need a DELETE request
 
